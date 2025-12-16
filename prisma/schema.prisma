@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  walletAddress String?
+  balance       Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  files         File[]
+  transactions  Transaction[]
+}
+
+model File {
+  id          String   @id @default(cuid())
+  name        String
+  size        Int
+  mimeType    String
+  storagePath String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  uploadedAt  DateTime @default(now())
+  lastBilledAt DateTime @default(now())
+  isLocked    Boolean  @default(false)
+  totalCost   Float    @default(0)
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount      Float
+  type        String
+  description String?
+  createdAt   DateTime @default(now())
+}

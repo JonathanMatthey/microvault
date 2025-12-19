@@ -1,0 +1,14 @@
+{
+  "name": "microvault-client",
+  "version": "1.0.0",
+  "description": "S3-based file upload client with presigned URLs",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

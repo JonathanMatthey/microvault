@@ -1,0 +1,70 @@
+server:
+  port: 8080
+  redis:
+    enabled: true
+    host: 127.0.0.1
+    port: 6379
+    db: 0
+    password: ""
+    key_prefix: "microvault:credits:"
+auth:
+  enabled: true
+  google_client_path: /etc/microvault/client.json
+  google_client_id: ""
+cors:
+  allow_origins:
+    - https://vault.skatkis-tech.net
+    - https://microvault.skatkis-tech.net
+    - http://localhost:5173
+    - http://127.0.0.1:5173
+    - http://localhost:3000
+    - http://127.0.0.1:3000
+features:
+  enable_boost: false
+credits:
+  # Number of decimal places for credits shown to users
+  scale: 4
+  # Internal multiplier for credits is derived as 10^scale (not configurable)
+  # Effect: credits are stored as integers and displayed credits = raw / (10^scale).
+  # Example: with units_per_credit=10 and receiving 1.23 currency units (123 minor units),
+  # credited raw = (123 / 10) * (10^scale) = 12.3 * 10000 = 123000 -> displayed as 12.3 credits.
+  # Currency minor units required for 1 credit (price per credit)
+  # Example: units_per_credit=10 means 10 minor currency units = 1.0 credit
+  # Therefore, with scale=4 and units_per_credit=10:
+  #   Receiving 1.23 Euro (123 minor units) results in:
+  #     credited raw = (123 / 10) * 10000 = 123000
+  #     displayed as 12.3 credits
+  units_per_credit: 10
+  # Hetzner charges
+  #   Given
+  #     Extra storage price: €0.0067 per TB-hour
+  #     In GiB: €0.0067 / 1024 = ~0.00000654297 per GiB-hour
+  #     Time: ~730 hours in an average month (365 × 24 / 12)
+  #     Cost per month: 0.00000654297 × 730 = ~0.004891 per GiB-month
+  #     In minor units: €0.004891 = 0.4891 cents per GiB-month
+  #   Therefore
+  #     Cost per GiB-month: 0.4891 cents
+  #     With units_per_credit=10, this is 0.04891 credits per GiB-month
+  #   We will charge 0.05 credits per GiB-month to cover costs and have margin.
+  storage_per_gib_month: 0.05          # credits to store 1 GiB for a month
+  charge_frequency_minutes: 1440       # charge daily
+  # Hetzner charges Egress Traffic
+  #  converted to GB: €1.00 / 1024 = ~0.0009765625 per GiB
+  #  In minor units: $1.20 = 120 cents, so 120 / 1024 = ~0.1171875 cents per GiB
+  # With units_per_credit=10, this is ~0.01171875 credits per GiB
+  # We will charge 0.05 credits per GiB to have margin.
+  egress_per_gib: 0.05                  # credits to download 1 GiB
+  # Hetzner does not charge for Ingress Traffic so we will make it very low.
+  ingress_per_gib: 0.001                 # credits to upload 1 GiB  
+monetization:
+  enabled: true
+  payment_pointer: "$ilp.interledger-test.dev/140d27e0"
+  min_topup_units: 1
+  max_topup_units: 10000000
+  incoming_auth_token: ""
+s3:
+  endpoint: https://hel1.your-objectstorage.com
+  region: hel1
+  bucket: h32bb
+  presigned_url_expiry_upload: 3600
+  presigned_url_expiry_download: 300

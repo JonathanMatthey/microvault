@@ -1,0 +1,32 @@
+[Unit]
+Description=MicroVault - Secure File Upload Service
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/microvault.env
+Type=simple
+User=microvault
+Group=microvault
+WorkingDirectory=/var/lib/microvault
+ExecStart=/usr/local/bin/microvault
+Restart=on-failure
+RestartSec=5s
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/microvault
+ReadOnlyPaths=/etc/microvault
+
+# Resource limits
+LimitNOFILE=65536
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=microvault
+
+[Install]
+WantedBy=multi-user.target

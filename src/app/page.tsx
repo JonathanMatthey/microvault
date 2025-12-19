@@ -47,16 +47,10 @@ export default function Home() {
 
           <div className="flex items-center gap-4">
             <Link 
-              href="/login" 
-              className="hidden sm:block text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Log In
-            </Link>
-            <Link 
               href="/dashboard" 
               className="bg-gray-900 text-white px-5 py-2.5 rounded-full font-medium hover:bg-gray-800 transition-colors"
             >
-              Sign Up
+              Log In
             </Link>
           </div>
         </div>

@@ -44,7 +44,7 @@ if command -v pnpm >/dev/null 2>&1; then
 	[ -f .env.local ] && mv .env.local .env.local.bak
 	pnpm run build
 	# Restore .env.local after build
-	[ -f .env.local.bak ] && mv .env.local .env.local
+	[ -f .env.local.bak ] && mv .env.local.bak .env.local
 else
 	echo "pnpm is required to build the frontend" >&2
 	exit 1

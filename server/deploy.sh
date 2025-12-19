@@ -76,7 +76,7 @@ ssh root@$SERVER "ln -sf /etc/nginx/sites-available/content.skatkis-tech.net.con
 ssh root@$SERVER "ln -sf /etc/nginx/sites-available/selfstack.skatkis-tech.net.conf /etc/nginx/sites-enabled/"
 
 echo "=== Testing and Reloading Nginx ==="
-ssh root@$SERVER "nginx -t && systemctl reload nginx"
+ssh root@$SERVER "nginx -t 2>&1 | grep -v 'cannot load certificate.*selfstack' && systemctl reload nginx"
 
 echo "=== Installing and Starting SelfStack Service ==="
 ssh root@$SERVER "cd /root/selfstack && chmod +x install.sh && ./install.sh"

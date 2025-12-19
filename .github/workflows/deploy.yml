@@ -63,4 +63,7 @@ jobs:
           ssh-keyscan -H 65.21.180.95 content.skatkis-tech.net microvault.skatkis-tech.net >> ~/.ssh/known_hosts
 
       - name: Run deploy script
+        env:
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: 784455620242-s0d334vgtbvoem5j3n0v0eo0lf03q2ua.apps.googleusercontent.com
+          NEXT_PUBLIC_BACKEND_URL: https://content.skatkis-tech.net
         run: bash server/deploy.sh

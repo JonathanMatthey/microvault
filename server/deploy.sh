@@ -42,6 +42,9 @@ if command -v pnpm >/dev/null 2>&1; then
 	pnpm install
 	# Temporarily rename .env.local to avoid it overriding production env
 	[ -f .env.local ] && mv .env.local .env.local.bak
+	# Build with environment variables for production
+	export NEXT_PUBLIC_GOOGLE_CLIENT_ID="${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-784455620242-s0d334vgtbvoem5j3n0v0eo0lf03q2ua.apps.googleusercontent.com}"
+	export NEXT_PUBLIC_BACKEND_URL="${NEXT_PUBLIC_BACKEND_URL:-https://content.skatkis-tech.net}"
 	pnpm run build
 	# Restore .env.local after build
 	[ -f .env.local.bak ] && mv .env.local.bak .env.local

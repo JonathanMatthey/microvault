@@ -75,6 +75,56 @@ echo "=== Enabling Nginx Sites ==="
 ssh root@$SERVER "ln -sf /etc/nginx/sites-available/content.skatkis-tech.net.conf /etc/nginx/sites-enabled/"
 ssh root@$SERVER "ln -sf /etc/nginx/sites-available/selfstack.skatkis-tech.net.conf /etc/nginx/sites-enabled/"
 
+echo "=== Verifying Certbot Certificates ==="
+ssh root@$SERVER '
+	set -euo pipefail
+	domains=("selfstack.skatkis-tech.net" "content.skatkis-tech.net")
+	missing=0
+	echo "Checking certbot allocations for: ${domains[*]}"
+
+	if command -v certbot >/dev/null 2>&1; then
+		certbot --version || true
+	else
+		echo "Warning: certbot not found on server PATH" >&2
+	fi
+
+	for d in "${domains[@]}"; do
+		echo "--- $d ---"
+		live="/etc/letsencrypt/live/$d"
+		if [ -d "$live" ]; then
+			ls -l "$live" || true
+			if [ ! -f "$live/fullchain.pem" ] || [ ! -f "$live/privkey.pem" ]; then
+				echo "Missing fullchain.pem or privkey.pem in $live" >&2
+				missing=1
+			else
+				if command -v openssl >/dev/null 2>&1; then
+					echo "Certificate metadata:"
+					openssl x509 -in "$live/fullchain.pem" -noout -issuer -subject -dates || true
+				fi
+				if command -v certbot >/dev/null 2>&1; then
+					echo "certbot certificates for $d:" && certbot certificates --domain "$d" || true
+				fi
+			fi
+			# Check renewal config exists
+			[ -f "/etc/letsencrypt/renewal/$d.conf" ] || { echo "Missing renewal config: /etc/letsencrypt/renewal/$d.conf" >&2; missing=1; }
+		else
+			echo "Missing live directory: $live" >&2
+			missing=1
+		fi
+	done
+
+	# Show certbot timers if available
+	if command -v systemctl >/dev/null 2>&1; then
+		systemctl list-timers --all | grep -E "certbot|letsencrypt" || true
+		systemctl status certbot.timer 2>/dev/null || true
+	fi
+
+	if [ "$missing" -ne 0 ]; then
+		echo "One or more certificates are missing or incomplete. Please ensure certbot issued valid certs for the domains above before reloading nginx." >&2
+		exit 1
+	fi
+'
+
 echo "=== Testing and Reloading Nginx ==="
 ssh root@$SERVER '
   # Capture nginx test output

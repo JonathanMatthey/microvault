@@ -29,7 +29,7 @@ func TestCalculateIngressCost(t *testing.T) {
 		want  int64
 	}{
 		{"zero bytes", 0, 0},
-		{"one byte", 1, 0},        // (1 * 15000) / 1073741824 = 0
+		{"one byte", 1, 1},        // min charge enforced
 		{"1 MB", 1024 * 1024, 14}, // (1048576 * 15000) / 1073741824 = 14.6... = 14
 		{"1 GiB exact", GiBBytes, 15000},
 		{"2 GiB", 2 * GiBBytes, 30000},
@@ -56,7 +56,7 @@ func TestCalculateEgressCost(t *testing.T) {
 		want  int64
 	}{
 		{"zero bytes", 0, 0},
-		{"one byte", 1, 0},        // (1 * 30000) / 1073741824 = 0
+		{"one byte", 1, 1},        // min charge enforced
 		{"1 MB", 1024 * 1024, 29}, // (1048576 * 30000) / 1073741824 = 29.2... = 29
 		{"1 GiB exact", GiBBytes, 30000},
 		{"2 GiB", 2 * GiBBytes, 60000},

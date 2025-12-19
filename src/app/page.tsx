@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { 
   Vault, 
@@ -17,6 +17,44 @@ import {
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<{ email: string; id: string; credits: number } | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+
+  // Load token & user on mount
+  useEffect(() => {
+    const stored = localStorage.getItem("googleIdToken");
+    if (stored) {
+      setToken(stored);
+      // Fetch minimal user info to show identity banner
+      const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
+      fetch(`${BACKEND_URL}/user`, {
+        headers: { Authorization: `Bearer ${stored}` },
+      })
+        .then(async (res) => {
+          if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem("googleIdToken");
+            setToken(null);
+            setUser(null);
+            setStatus("Please sign in to continue.");
+            return null;
+          }
+          if (!res.ok) return null;
+          return res.json();
+        })
+        .then((data) => {
+          if (data) setUser(data);
+        })
+        .catch(() => {});
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("googleIdToken");
+    setToken(null);
+    setUser(null);
+    setStatus(null);
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -46,12 +84,33 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Link 
-              href="/dashboard" 
-              className="bg-gray-900 text-white px-5 py-2.5 rounded-full font-medium hover:bg-gray-800 transition-colors"
-            >
-              Log In
-            </Link>
+            {token && user ? (
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-xs text-gray-500">Signed in as</p>
+                  <p className="text-sm font-medium text-gray-900 truncate max-w-[240px]">{user.email || user.id}</p>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
+                >
+                  Log out
+                </button>
+                <Link 
+                  href="/dashboard" 
+                  className="px-4 py-2 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors"
+                >
+                  Dashboard
+                </Link>
+              </div>
+            ) : (
+              <Link 
+                href="/dashboard" 
+                className="bg-gray-900 text-white px-5 py-2.5 rounded-full font-medium hover:bg-gray-800 transition-colors"
+              >
+                Log In
+              </Link>
+            )}
           </div>
         </div>
       </header>

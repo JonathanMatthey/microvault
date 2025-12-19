@@ -132,6 +132,13 @@ export default function Dashboard() {
     const res = await fetch(`${BACKEND_URL}/user`, {
       headers: authHeaders(idToken),
     });
+    if (res.status === 401 || res.status === 403) {
+      setStatus("Please sign in to continue.");
+      localStorage.removeItem("googleIdToken");
+      setToken(null);
+      setUser(null);
+      return;
+    }
     if (!res.ok) return;
     const data = (await res.json()) as ServerUser;
     setUser(data);
@@ -141,6 +148,14 @@ export default function Dashboard() {
     const res = await fetch(`${BACKEND_URL}/files`, {
       headers: authHeaders(idToken),
     });
+    if (res.status === 401 || res.status === 403) {
+      setStatus("Please sign in to continue.");
+      localStorage.removeItem("googleIdToken");
+      setToken(null);
+      setUser(null);
+      setFiles([]);
+      return;
+    }
     if (!res.ok) return;
     const data = (await res.json()) as ServerFile[];
     setFiles(data);
@@ -164,12 +179,13 @@ export default function Dashboard() {
       document.head.appendChild(link);
 
       const handler = async (event: any) => {
-        if (!event?.detail?.incomingPayment) return;
+        const receiptUrl = event?.detail?.incomingPayment || event?.detail?.receipt || null;
+        if (!receiptUrl) return;
         try {
           await fetch(`${BACKEND_URL}/monetization/verify`, {
             method: "POST",
             headers: authHeaders(idToken, { "Content-Type": "application/json" }),
-            body: JSON.stringify({ receipt_url: event.detail.incomingPayment }),
+            body: JSON.stringify({ receipt_url: receiptUrl }),
           });
           refreshUser(idToken);
         } catch (err) {
@@ -178,6 +194,8 @@ export default function Dashboard() {
       };
 
       document.addEventListener("monetizationprogress", handler as any);
+      // Also handle legacy event name used by some providers
+      document.addEventListener("monetization", handler as any);
       return () => document.removeEventListener("monetizationprogress", handler as any);
     } catch (err) {
       console.warn("monetization config fetch failed", err);
@@ -403,7 +421,9 @@ export default function Dashboard() {
             {token ? (
               <>
                 <div className="text-right">
-                  <p className="text-sm text-gray-500">Credits</p>
+                  <p className="text-sm text-gray-500">Signed in as</p>
+                  <p className="text-sm font-medium text-gray-900 truncate max-w-[240px]">{user?.email || user?.id}</p>
+                  <p className="text-sm text-gray-500 mt-1">Credits</p>
                   <p className="text-lg font-semibold text-gray-900">{formatCredits(user?.credits)}</p>
                 </div>
                 <button
@@ -481,21 +501,69 @@ export default function Dashboard() {
             {token ? (isDragging ? "Drop files here" : "Drag and drop files here") : "Sign in to start uploading"}
           </p>
           <p className="text-gray-500">or click to browse • uploads are charged upfront</p>
-          {uploadProgress !== null && (
-            <div className="mt-6 max-w-xs mx-auto">
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-500 transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
-              </div>
-              <p className="text-sm text-gray-500 mt-2">{status || "Uploading..."}</p>
-            </div>
-          )}
-
           {token && queue.length > 0 && (
             <div className="mt-4 text-sm text-gray-600">
               Queue: {queue.length} item{queue.length > 1 ? "s" : ""} pending
             </div>
           )}
         </div>
+        {/* Upload Queue (moved above files) */}
+        {token && (queue.length > 0 || isUploading) && (
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">Upload Queue</h2>
+              <span className="text-sm text-gray-500">{Math.max(queue.length - (isUploading ? 1 : 0), 0)} pending</span>
+            </div>
+            <div className="divide-y divide-gray-50">
+              {isUploading && currentFileName && (
+                <div className="px-6 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
+                      <Upload className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{currentFileName}</p>
+                      <div className="mt-2 w-64">
+                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-emerald-500 transition-all duration-300" style={{ width: `${uploadProgress || 0}%` }} />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">{status || "Uploading..."}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={cancelCurrentUpload}
+                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Cancel upload"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
+              {queue.slice(isUploading ? 1 : 0).map((f, idx) => (
+                <div key={`${f.name}-${idx}`} className="px-6 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <File className="w-5 h-5 text-gray-500" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{f.name}</p>
+                      <p className="text-xs text-gray-500">Queued</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => removeQueuedItem((isUploading ? 1 : 0) + idx)}
+                    className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Remove from queue"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
@@ -584,59 +652,6 @@ export default function Dashboard() {
             </div>
           )}
         </div>
-
-        {/* Upload Queue */}
-        {token && (queue.length > 0 || isUploading) && (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Upload Queue</h2>
-              <span className="text-sm text-gray-500">{queue.length} pending</span>
-            </div>
-            <div className="divide-y divide-gray-50">
-              {isUploading && currentFileName && (
-                <div className="px-6 py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
-                      <Upload className="w-5 h-5 text-emerald-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{currentFileName}</p>
-                      <p className="text-xs text-gray-500">Uploading...</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={cancelCurrentUpload}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    title="Cancel upload"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
-
-              {queue.map((f, idx) => (
-                <div key={`${f.name}-${idx}`} className="px-6 py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <File className="w-5 h-5 text-gray-500" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{f.name}</p>
-                      <p className="text-xs text-gray-500">Queued</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => removeQueuedItem(idx)}
-                    className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    title="Remove from queue"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </main>
 
       {status && (

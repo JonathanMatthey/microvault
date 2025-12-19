@@ -98,6 +98,12 @@ MicroVault Phase 5 uses AWS S3 (or compatible object storage) with proxy uploads
   - `Active`: balance ≥ 0 (can upload/download/share)
   - `Frozen`: balance < 0 (uploads and share downloads blocked)
 
+#### Minimum Charge Rule
+
+- To prevent abuse with extremely small files, ingress and egress costs enforce a **minimum non-zero charge** of `1` raw credit unit whenever the calculated cost would otherwise be `0` and the file size is greater than `0`.
+- With the default `scale=4`, this renders as **`0.0001` credits** in the UI for tiny uploads/downloads.
+- Zero-byte transfers still cost `0`.
+
 
 ## Getting Started
 

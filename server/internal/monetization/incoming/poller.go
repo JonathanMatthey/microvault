@@ -35,7 +35,7 @@ func NewPoller(repo Repository, httpClient *http.Client, authToken string, units
 		creditUnit:     creditUnit,
 		expectedAsset:  expectedAsset,
 		expectedScale:  expectedScale,
-		pollInterval:   30 * time.Second,
+		pollInterval:   10 * time.Second,
 		inactiveAfter:  24 * time.Hour,
 		stopCh:         make(chan struct{}),
 	}

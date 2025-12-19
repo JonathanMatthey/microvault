@@ -15,7 +15,7 @@ func buildCORSConfig(cfg *Config) middleware.CORSConfig {
 		origins = []string{
 			"http://localhost:5173", "http://127.0.0.1:5173",
 			"http://localhost:5174", "http://127.0.0.1:5174",
-			"https://vault.skatkis-tech.net", "https://content.skatkis-tech.net",
+			"https://vault.skatkis-tech.net", "https://content.skatkis-tech.net", "https://microvault.skatkis-tech.net",
 		}
 	}
 

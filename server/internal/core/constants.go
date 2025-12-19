@@ -27,7 +27,12 @@ func CalculateIngressCost(bytes int64, creditsPerGiB int64) int64 {
 	if bytes <= 0 {
 		return 0
 	}
-	return (bytes * creditsPerGiB) / GiBBytes
+	cost := (bytes * creditsPerGiB) / GiBBytes
+	if cost == 0 && creditsPerGiB > 0 {
+		// Enforce a minimum non-zero charge to prevent abuse for tiny files
+		return 1
+	}
+	return cost
 }
 
 // CalculateEgressCost calculates the credit cost for downloading bytes.
@@ -36,7 +41,12 @@ func CalculateEgressCost(bytes int64, creditsPerGiB int64) int64 {
 	if bytes <= 0 {
 		return 0
 	}
-	return (bytes * creditsPerGiB) / GiBBytes
+	cost := (bytes * creditsPerGiB) / GiBBytes
+	if cost == 0 && creditsPerGiB > 0 {
+		// Enforce a minimum non-zero charge to prevent abuse for tiny files
+		return 1
+	}
+	return cost
 }
 
 // CalculateStorageMonthlyCost calculates the monthly storage cost for bytes at a rate per GiB-month.

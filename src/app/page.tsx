@@ -9,7 +9,6 @@ import {
   Clock,
   Zap,
   ArrowRight,
-  ChevronDown,
 } from "lucide-react";
 
 export default function Home() {
@@ -68,26 +67,17 @@ export default function Home() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
-            <button className="flex items-center gap-1 text-gray-600 hover:text-gray-900 transition-colors">
-              Product <ChevronDown className="w-4 h-4" />
-            </button>
+            <Link
+              href="#how-it-works"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              How it works
+            </Link>
             <Link
               href="#pricing"
               className="text-gray-600 hover:text-gray-900 transition-colors"
             >
               Pricing
-            </Link>
-            <Link
-              href="#about"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              About
-            </Link>
-            <Link
-              href="#help"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Help
             </Link>
           </nav>
 
@@ -176,46 +166,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Stats Section */}
-        <section className="border-t border-gray-100">
-          <div className="max-w-7xl mx-auto px-6 py-16">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {[
-                {
-                  value: "$0.001",
-                  label: "per GB per hour",
-                  sublabel: "Simple pricing",
-                },
-                {
-                  value: "10GB",
-                  label: "free storage",
-                  sublabel: "To get started",
-                },
-                {
-                  value: "99.9%",
-                  label: "uptime",
-                  sublabel: "Reliable hosting",
-                },
-                { value: "∞", label: "file types", sublabel: "Store anything" },
-              ].map((stat, i) => (
-                <div
-                  key={i}
-                  className={`text-center opacity-0 animate-fade-in-up`}
-                  style={{
-                    animationDelay: `${(i + 1) * 100}ms`,
-                    animationFillMode: "forwards",
-                  }}
-                >
-                  <p className="text-3xl md:text-4xl font-semibold text-gray-900 mb-1">
-                    {stat.value}
-                  </p>
-                  <p className="text-gray-500">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* How it Works Section */}
         <section
           id="how-it-works"
@@ -268,6 +218,110 @@ export default function Home() {
                   </p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing Section */}
+        <section id="pricing" className="border-t border-gray-100 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-6 py-24">
+            <div className="text-center mb-16">
+              <h2 className="font-serif text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
+                Pricing Comparison
+              </h2>
+              <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+                Transparent, pay-per-use pricing that competes with the best in the industry
+              </p>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Service</th>
+                      <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">Storage Cost (€/GiB-month)</th>
+                      <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">Storage Cost (€/TB-month)</th>
+                      <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">Pricing Model</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    <tr className="bg-emerald-50/50 hover:bg-emerald-50 transition-colors">
+                      <td className="px-6 py-4">
+                        <span className="font-semibold text-gray-900">Microvault (new)</span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <span className="font-semibold text-emerald-600">€0.0050</span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <span className="font-semibold text-emerald-600">€5.12</span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                          Pay-per-use
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">Transparent, granular</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 text-gray-900">Hetzner Object Storage (cost)</td>
+                      <td className="px-6 py-4 text-right text-gray-600">~€0.0049</td>
+                      <td className="px-6 py-4 text-right text-gray-600">~€4.89</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                          Metered infra
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">Your cost base</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 text-gray-900">Dropbox Plus (2 TB)</td>
+                      <td className="px-6 py-4 text-right text-gray-600">~€0.0059</td>
+                      <td className="px-6 py-4 text-right text-gray-600">~€12</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                          Subscription
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">Subsidized</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 text-gray-900">Google Drive (2 TB)</td>
+                      <td className="px-6 py-4 text-right text-gray-600">~€0.0049</td>
+                      <td className="px-6 py-4 text-right text-gray-600">~€10</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                          Subscription
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">Subsidized</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 text-gray-900">AWS S3 Standard</td>
+                      <td className="px-6 py-4 text-right text-gray-600">~€0.023</td>
+                      <td className="px-6 py-4 text-right text-gray-600">~€23</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                          Metered infra
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">Noisy pricing</td>
+                    </tr>
+                    <tr className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 text-gray-900">GCS Standard</td>
+                      <td className="px-6 py-4 text-right text-gray-600">~€0.020</td>
+                      <td className="px-6 py-4 text-right text-gray-600">~€20</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                          Metered infra
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">Region-dependent</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </section>

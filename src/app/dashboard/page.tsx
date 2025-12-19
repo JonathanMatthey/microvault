@@ -12,6 +12,16 @@ type ServerUser = {
   credits: number;
 };
 
+type ServerTransaction = {
+  id: string;
+  timestamp: string;
+  type: string;
+  reason: string;
+  amount: number;
+  balance_after: number;
+  description: string;
+};
+
 type ServerFile = {
   id: string;
   uploadId: string;
@@ -74,6 +84,7 @@ export default function Dashboard() {
   const [shareExpiry, setShareExpiry] = useState<string | null>(null);
   const loginButtonRef = useRef<HTMLDivElement>(null);
   const balanceTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [transactions, setTransactions] = useState<ServerTransaction[]>([]);
 
   // Boot Google Sign-In once on mount
   useEffect(() => {
@@ -110,12 +121,13 @@ export default function Dashboard() {
     if (!token) {
       setUser(null);
       setFiles([]);
+      setTransactions([]);
       if (balanceTimer.current) clearInterval(balanceTimer.current);
       return;
     }
 
     const init = async () => {
-      await Promise.all([refreshUser(token), refreshFiles(token), ensureMonetization(token)]);
+      await Promise.all([refreshUser(token), refreshFiles(token), refreshTransactions(token), ensureMonetization(token)]);
     };
     init().catch((err) => console.error("init error", err));
 
@@ -159,6 +171,23 @@ export default function Dashboard() {
     if (!res.ok) return;
     const data = (await res.json()) as ServerFile[];
     setFiles(data);
+  };
+
+  const refreshTransactions = async (idToken: string) => {
+    const res = await fetch(`${BACKEND_URL}/transactions?limit=50`, {
+      headers: authHeaders(idToken),
+    });
+    if (res.status === 401 || res.status === 403) {
+      setStatus("Please sign in to continue.");
+      localStorage.removeItem("googleIdToken");
+      setToken(null);
+      setUser(null);
+      setTransactions([]);
+      return;
+    }
+    if (!res.ok) return;
+    const data = await res.json();
+    setTransactions((data as any).transactions || []);
   };
 
   const ensureMonetization = async (idToken: string) => {
@@ -208,6 +237,7 @@ export default function Dashboard() {
     setToken(null);
     setUser(null);
     setFiles([]);
+    setTransactions([]);
     setStatus(null);
   };
 
@@ -663,6 +693,51 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+
+        {token && (
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">Recent Transactions</h2>
+              <button
+                className="text-sm text-gray-500 hover:text-gray-800"
+                onClick={() => token && refreshTransactions(token)}
+              >
+                Refresh
+              </button>
+            </div>
+            {transactions.length === 0 ? (
+              <div className="px-6 py-6 text-sm text-gray-500">No transactions yet.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">When</th>
+                      <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                      <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider">Reason</th>
+                      <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                      <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {transactions.map((txn) => (
+                      <tr key={txn.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-3 text-gray-700">{new Date(txn.timestamp).toLocaleString()}</td>
+                        <td className="px-6 py-3 text-gray-700 capitalize">{txn.type}</td>
+                        <td className="px-6 py-3 text-gray-700">{txn.reason || txn.description}</td>
+                        <td className={`px-6 py-3 text-right font-medium ${txn.amount >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                          {txn.amount >= 0 ? "+" : ""}
+                          {formatCredits(txn.amount)}
+                        </td>
+                        <td className="px-6 py-3 text-right text-gray-700">{formatCredits(txn.balance_after)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       {status && (

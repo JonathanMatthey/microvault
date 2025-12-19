@@ -2,16 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Vault,
   Upload,
   Clock,
   Zap,
   ArrowRight,
-  FileText,
-  Image as ImageIcon,
-  Film,
-  MoreHorizontal,
   ChevronDown,
 } from "lucide-react";
 
@@ -165,119 +162,16 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right Column - Product Mockup */}
-            <div className="relative opacity-0 animate-fade-in-up animation-delay-200">
-              {/* Purple glow background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-200 via-purple-100 to-violet-200 rounded-3xl transform rotate-2 scale-105"></div>
-
-              {/* Main card */}
-              <div className="relative bg-white rounded-2xl shadow-xl p-6 border border-gray-100 animate-float">
-                {/* Card Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <button className="text-gray-400 hover:text-gray-600">
-                    ✕
-                  </button>
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-gradient-to-br from-violet-400 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                      AJ
-                    </div>
-                    <span className="font-medium text-gray-900">Demo User</span>
-                  </div>
-                  <span className="text-xs font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
-                    PRO ACCOUNT
-                  </span>
-                </div>
-
-                {/* Your Files Section */}
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        Your Files
-                      </h3>
-                      <p className="text-sm text-gray-400">2.4 out of 10 GB</p>
-                    </div>
-                    <button className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-                      <Upload className="w-4 h-4" /> Upload
-                    </button>
-                  </div>
-
-                  {/* Storage bars */}
-                  <div className="flex gap-2 mb-6">
-                    <div className="h-2 bg-gray-200 rounded-full flex-1">
-                      <div className="h-2 bg-emerald-500 rounded-full w-1/4"></div>
-                    </div>
-                    <div className="h-2 bg-gray-200 rounded-full flex-1">
-                      <div className="h-2 bg-violet-400 rounded-full w-1/3"></div>
-                    </div>
-                    <div className="h-2 bg-gray-200 rounded-full flex-1">
-                      <div className="h-2 bg-gray-300 rounded-full w-1/6"></div>
-                    </div>
-                    <div className="h-2 bg-gray-200 rounded-full flex-1">
-                      <div className="h-2 bg-emerald-300 rounded-full w-1/2"></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Files Table */}
-                <div className="border border-gray-100 rounded-xl overflow-hidden">
-                  <div className="grid grid-cols-4 gap-4 px-4 py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <span>File Name</span>
-                    <span>Type</span>
-                    <span>Size</span>
-                    <span>Cost/hr</span>
-                  </div>
-
-                  {[
-                    {
-                      name: "project-assets.zip",
-                      type: "Archive",
-                      icon: FileText,
-                      size: "1.2 GB",
-                      cost: "$0.0012",
-                    },
-                    {
-                      name: "presentation.pdf",
-                      type: "Document",
-                      icon: FileText,
-                      size: "45 MB",
-                      cost: "$0.00004",
-                    },
-                    {
-                      name: "hero-banner.png",
-                      type: "Image",
-                      icon: ImageIcon,
-                      size: "8.2 MB",
-                      cost: "$0.000008",
-                    },
-                  ].map((file, i) => (
-                    <div
-                      key={i}
-                      className="grid grid-cols-4 gap-4 px-4 py-3 border-t border-gray-50 text-sm"
-                    >
-                      <span className="text-gray-900 truncate font-medium">
-                        {file.name}
-                      </span>
-                      <span className="text-gray-500">{file.type}</span>
-                      <span className="text-gray-500">{file.size}</span>
-                      <span className="text-emerald-600 font-medium">
-                        {file.cost}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Processing indicator */}
-                <div className="mt-4 flex items-center justify-between bg-violet-50 rounded-xl px-4 py-3">
-                  <div>
-                    <p className="font-medium text-gray-900">File Processing</p>
-                    <p className="text-sm text-gray-500">
-                      video-render.mp4 • 340 MB
-                    </p>
-                  </div>
-                  <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                </div>
-              </div>
+            {/* Right Column - Hero Image */}
+            <div className="relative opacity-0 animate-fade-in-up animation-delay-200 lg:scale-125 lg:translate-x-8">
+              <Image
+                src="/house.jpg"
+                alt="SelfStack - Self-hosted storage"
+                width={900}
+                height={750}
+                className="w-full h-auto"
+                priority
+              />
             </div>
           </div>
         </section>

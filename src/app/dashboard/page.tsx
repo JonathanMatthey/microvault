@@ -293,7 +293,7 @@ export default function Dashboard() {
   }, [queue, isUploading, token]);
 
   const uploadFile = async (file: File, idToken: string) => {
-    setUploadProgress(5);
+    setUploadProgress(0);
     setStatus("Requesting upload slot...");
     try {
       const urlRes = await fetch(`${BACKEND_URL}/files/upload-url`, {
@@ -314,26 +314,62 @@ export default function Dashboard() {
       }
 
       const { uploadId } = await urlRes.json();
-      setUploadProgress(25);
-      setStatus("Uploading via proxy...");
+      setUploadProgress(1);
+      setStatus("Uploading file...");
 
+      // Use XMLHttpRequest to track upload progress
       const form = new FormData();
       form.append("file", file);
       const ac = new AbortController();
       abortRef.current = ac;
-      const proxyRes = await fetch(`${BACKEND_URL}/files/${uploadId}/upload`, {
-        method: "POST",
-        headers: authHeaders(idToken, { "X-Filename": file.name }),
-        body: form,
-        signal: ac.signal,
+
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        
+        // Track upload progress
+        xhr.upload.addEventListener("progress", (e) => {
+          if (e.lengthComputable) {
+            // Map upload progress from 1% to 95% (leave room for finalization)
+            const percentComplete = Math.round((e.loaded / e.total) * 94) + 1;
+            setUploadProgress(percentComplete);
+            const mbLoaded = (e.loaded / (1024 * 1024)).toFixed(2);
+            const mbTotal = (e.total / (1024 * 1024)).toFixed(2);
+            setStatus(`Uploading: ${mbLoaded} MB / ${mbTotal} MB`);
+          }
+        });
+
+        xhr.addEventListener("load", () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve();
+          } else {
+            reject(new Error(xhr.responseText || "Proxy upload failed"));
+          }
+        });
+
+        xhr.addEventListener("error", () => {
+          reject(new Error("Network error during upload"));
+        });
+
+        xhr.addEventListener("abort", () => {
+          reject(new Error("Upload canceled"));
+        });
+
+        // Handle abort controller
+        ac.signal.addEventListener("abort", () => {
+          xhr.abort();
+        });
+
+        xhr.open("POST", `${BACKEND_URL}/files/${uploadId}/upload`);
+        // Set auth header
+        const headers = authHeaders(idToken, { "X-Filename": file.name });
+        Object.entries(headers).forEach(([key, value]) => {
+          xhr.setRequestHeader(key, value);
+        });
+        
+        xhr.send(form);
       });
 
-      if (!proxyRes.ok) {
-        const msg = await proxyRes.text();
-        throw new Error(msg || "Proxy upload failed");
-      }
-
-      setUploadProgress(90);
+      setUploadProgress(96);
       setStatus("Finalizing upload...");
 
       const completeRes = await fetch(`${BACKEND_URL}/files/${uploadId}/complete`, {

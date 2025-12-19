@@ -66,6 +66,9 @@ echo "=== Uploading Nginx Configs ==="
 scp deploy/selfstack.nginx.conf root@$SERVER:/etc/nginx/sites-available/content.skatkis-tech.net.conf
 scp deploy/selfstack-client.nginx.conf root@$SERVER:/etc/nginx/sites-available/selfstack.skatkis-tech.net.conf
 
+echo "=== Fixing Dashboard Route ==="
+ssh root@$SERVER "cp $FRONT_SELFSTACK_DIR/dashboard.html $FRONT_SELFSTACK_DIR/dashboard/index.html 2>/dev/null || true"
+
 echo "=== Setting Permissions ==="
 ssh root@$SERVER "chown -R www-data:www-data $FRONT_SELFSTACK_DIR"
 ssh root@$SERVER "chmod -R 755 $FRONT_SELFSTACK_DIR"

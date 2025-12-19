@@ -4,8 +4,8 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/bosbaber/hackweek/microvault/internal/ledger"
-	"github.com/bosbaber/hackweek/microvault/internal/ledger/fixed"
+	"github.com/bosbaber/hackweek/selfstack/internal/ledger"
+	"github.com/bosbaber/hackweek/selfstack/internal/ledger/fixed"
 )
 
 var (

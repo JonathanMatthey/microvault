@@ -7,14 +7,14 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
-	"github.com/bosbaber/hackweek/microvault/internal/account"
-	"github.com/bosbaber/hackweek/microvault/internal/activity"
-	"github.com/bosbaber/hackweek/microvault/internal/ledger/memory"
-	"github.com/bosbaber/hackweek/microvault/internal/policy"
-	"github.com/bosbaber/hackweek/microvault/internal/share"
-	sharestore "github.com/bosbaber/hackweek/microvault/internal/share/store"
-	"github.com/bosbaber/hackweek/microvault/internal/storage"
-	"github.com/bosbaber/hackweek/microvault/internal/upload"
+	"github.com/bosbaber/hackweek/selfstack/internal/account"
+	"github.com/bosbaber/hackweek/selfstack/internal/activity"
+	"github.com/bosbaber/hackweek/selfstack/internal/ledger/memory"
+	"github.com/bosbaber/hackweek/selfstack/internal/policy"
+	"github.com/bosbaber/hackweek/selfstack/internal/share"
+	sharestore "github.com/bosbaber/hackweek/selfstack/internal/share/store"
+	"github.com/bosbaber/hackweek/selfstack/internal/storage"
+	"github.com/bosbaber/hackweek/selfstack/internal/upload"
 )
 
 func initDevMode(e *echo.Echo, cfg *Config) {

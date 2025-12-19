@@ -1,20 +1,20 @@
 
-# MicroVault
+# SelfStack
 
 **Deployable web storage with transparent, pay-as-you-go economics**
 
-Microvault is a web-based storage and data-sharing platform designed for environments where cost control, data locality, and network constraints matter. Deploy it on private infrastructure or restricted networks, while using Interledger Web Monetization for granular, usage-based payments.
+SelfStack is a web-based storage and data-sharing platform designed for environments where cost control, data locality, and network constraints matter. Deploy it on private infrastructure or restricted networks, while using Interledger Web Monetization for granular, usage-based payments.
 
 ---
 
-## 🚀 What Microvault Is (and Is Not)
+## 🚀 What SelfStack Is (and Is Not)
 
 - **Requires internet connectivity only for Web Monetization payments.**
 - **Data never needs to leave the local network.**
 - **Storage and access can remain entirely on-premise.**
 - **Internet access is required only for payment settlement, not data transfer.**
 
-This makes Microvault ideal for:
+This makes SelfStack ideal for:
 - Slow or intermittent external connectivity
 - Strict data-residency rules
 - Controlled egress policies
@@ -23,7 +23,7 @@ This makes Microvault ideal for:
 
 ## 🔗 File Sharing (Phase 5+)
 
-Microvault supports secure, auditable file sharing via expiring links:
+SelfStack supports secure, auditable file sharing via expiring links:
 
 - **Share any uploaded file** with a one-click action in the web UI.
 - **Links are time-limited** (default: 7 days) and can be redeemed by anyone with the URL.
@@ -41,7 +41,7 @@ Microvault supports secure, auditable file sharing via expiring links:
 
 ## Phase 5 Architecture
 
-MicroVault Phase 5 uses AWS S3 (or compatible object storage) with proxy uploads to S3 (no tus). Filenames are part of the S3 key (`uploadId-filename`).
+SelfStack Phase 5 uses AWS S3 (or compatible object storage) with proxy uploads to S3 (no tus). Filenames are part of the S3 key (`uploadId-filename`).
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -116,7 +116,7 @@ MicroVault Phase 5 uses AWS S3 (or compatible object storage) with proxy uploads
 
 ### Configuration
 
-MicroVault uses a YAML configuration file (JSON still works for legacy setups). Create `.localconfig.yaml` for development:
+SelfStack uses a YAML configuration file (JSON still works for legacy setups). Create `.localconfig.yaml` for development:
 
 ```yaml
 server:
@@ -152,7 +152,7 @@ monetization:
 
 ```bash
 # Build without any build tags (unified binary)
-go build -o microvault .
+go build -o selfstack .
 ```
 
 The binary now supports both dev and production modes via CLI flags (see below).
@@ -161,16 +161,16 @@ The binary now supports both dev and production modes via CLI flags (see below).
 
 ```bash
 # Development mode (X-User-ID header auth, auto-detects .localconfig.yaml/.yml)
-./microvault -dev
+./selfstack -dev
 
 # Development with explicit config
-./microvault -dev -config my-config.yaml
+./selfstack -dev -config my-config.yaml
 
 # Production mode (requires full config.yaml with auth settings)
-./microvault -config /etc/microvault/config.yaml
+./selfstack -config /etc/selfstack/config.yaml
 
 # Show help
-./microvault -help
+./selfstack -help
 ```
 
 The server will start on `http://localhost:8080` with the following endpoints:
@@ -313,7 +313,7 @@ Tests automatically enable dev mode via package-level initialization.
 ### Project Structure
 
 ```
-microvault/
+selfstack/
 ├── main.go                    # Unified entry point (dev + prod modes)
 ├── config.go                  # Configuration loading
 ├── auth.go                    # Google OAuth (production)
@@ -392,7 +392,7 @@ microvault/
 
 ### Build errors with old tags
 - Remove `-tags devlogin` from build commands
-- Use `./microvault -dev` flag instead
+- Use `./selfstack -dev` flag instead
 - Old build tags no longer needed - everything is in one binary
 
 ## License

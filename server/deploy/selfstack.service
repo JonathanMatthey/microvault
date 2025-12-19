@@ -1,14 +1,14 @@
 [Unit]
-Description=MicroVault - Secure File Upload Service
+Description=SelfStack - Secure File Upload Service
 After=network.target
 
 [Service]
-EnvironmentFile=/etc/microvault.env
+EnvironmentFile=/etc/selfstack.env
 Type=simple
-User=microvault
-Group=microvault
-WorkingDirectory=/var/lib/microvault
-ExecStart=/usr/local/bin/microvault
+User=selfstack
+Group=selfstack
+WorkingDirectory=/var/lib/selfstack
+ExecStart=/usr/local/bin/selfstack
 Restart=on-failure
 RestartSec=5s
 
@@ -17,8 +17,8 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/var/lib/microvault
-ReadOnlyPaths=/etc/microvault
+ReadWritePaths=/var/lib/selfstack
+ReadOnlyPaths=/etc/selfstack
 
 # Resource limits
 LimitNOFILE=65536
@@ -26,7 +26,7 @@ LimitNOFILE=65536
 # Logging
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=microvault
+SyslogIdentifier=selfstack
 
 [Install]
 WantedBy=multi-user.target

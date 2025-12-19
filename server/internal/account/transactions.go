@@ -6,7 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/bosbaber/hackweek/microvault/internal/ledger"
+	"github.com/bosbaber/hackweek/selfstack/internal/ledger"
 )
 
 // HandleGetTransactions returns up to N recent transactions (newest first).

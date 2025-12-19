@@ -24,7 +24,7 @@ func NewRedisRepo(addr string, db int, password, keyPrefix string) (*RedisRepo, 
 	}
 	p := keyPrefix
 	if p == "" {
-		p = "microvault:ip:"
+		p = "selfstack:ip:"
 	}
 	return &RedisRepo{c: rdb, prefix: p}, nil
 }

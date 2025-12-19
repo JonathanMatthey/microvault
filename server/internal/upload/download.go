@@ -10,10 +10,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
-	"github.com/bosbaber/hackweek/microvault/internal/core"
-	"github.com/bosbaber/hackweek/microvault/internal/ledger"
-	"github.com/bosbaber/hackweek/microvault/internal/policy"
-	"github.com/bosbaber/hackweek/microvault/internal/storage"
+	"github.com/bosbaber/hackweek/selfstack/internal/core"
+	"github.com/bosbaber/hackweek/selfstack/internal/ledger"
+	"github.com/bosbaber/hackweek/selfstack/internal/policy"
+	"github.com/bosbaber/hackweek/selfstack/internal/storage"
 )
 
 // DownloadHandler handles file download requests using S3 presigned URLs.

@@ -7,7 +7,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/bosbaber/hackweek/microvault/internal/storage"
+	"github.com/bosbaber/hackweek/selfstack/internal/storage"
 )
 
 // DeletionHandler handles file deletion requests for S3-backed storage.

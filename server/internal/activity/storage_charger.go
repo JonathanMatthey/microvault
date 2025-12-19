@@ -6,9 +6,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/bosbaber/hackweek/microvault/internal/core"
-	"github.com/bosbaber/hackweek/microvault/internal/ledger"
-	"github.com/bosbaber/hackweek/microvault/internal/storage"
+	"github.com/bosbaber/hackweek/selfstack/internal/core"
+	"github.com/bosbaber/hackweek/selfstack/internal/ledger"
+	"github.com/bosbaber/hackweek/selfstack/internal/storage"
 	"github.com/google/uuid"
 )
 

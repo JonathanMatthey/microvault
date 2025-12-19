@@ -1,6 +1,6 @@
 package policy
 
-import "github.com/bosbaber/hackweek/microvault/internal/core"
+import "github.com/bosbaber/hackweek/selfstack/internal/core"
 
 // Engine evaluates authorization decisions based on balances.
 type Engine struct {

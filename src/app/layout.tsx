@@ -13,7 +13,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "MicroVault - Pay-per-use File Hosting",
+  title: "SelfStack - Pay-per-use File Hosting",
   description: "Store files and pay only for what you use. Per GB, per hour. Powered by Open Payments.",
 };
 

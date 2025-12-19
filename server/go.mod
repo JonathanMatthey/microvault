@@ -1,4 +1,4 @@
-module github.com/bosbaber/hackweek/microvault
+module github.com/bosbaber/hackweek/selfstack
 
 go 1.24.0
 

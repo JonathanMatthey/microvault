@@ -8,10 +8,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/bosbaber/hackweek/microvault/internal/ledger"
-	"github.com/bosbaber/hackweek/microvault/internal/policy"
-	"github.com/bosbaber/hackweek/microvault/internal/share/store"
-	"github.com/bosbaber/hackweek/microvault/internal/storage"
+	"github.com/bosbaber/hackweek/selfstack/internal/ledger"
+	"github.com/bosbaber/hackweek/selfstack/internal/policy"
+	"github.com/bosbaber/hackweek/selfstack/internal/share/store"
+	"github.com/bosbaber/hackweek/selfstack/internal/storage"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/require"
 )

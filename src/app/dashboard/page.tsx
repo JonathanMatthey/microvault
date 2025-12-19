@@ -414,7 +414,7 @@ export default function Dashboard() {
             <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
               <Vault className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-semibold text-gray-900">MicroVault</span>
+            <span className="text-xl font-semibold text-gray-900">SelfStack</span>
           </Link>
 
           <div className="flex items-center gap-4">

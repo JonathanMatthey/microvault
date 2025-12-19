@@ -36,10 +36,10 @@ func main() {
 	flag.BoolVar(help, "h", false, "show help message")
 
 	flag.Usage = func() {
-		helpText := "MicroVault - File Storage Service\n\n" +
+		helpText := "SelfStack - File Storage Service\n\n" +
 			"Usage:\n" +
-			"  microvault [options]                    Start server\n" +
-			"  microvault <command> [args] [options]   Run admin command\n\n" +
+			"  selfstack [options]                    Start server\n" +
+			"  selfstack <command> [args] [options]   Run admin command\n\n" +
 			"Server Options:\n" +
 			"  -config string\n" +
 			"        path to configuration file\n" +
@@ -59,22 +59,22 @@ func main() {
 			"        path to config.yaml (overridden by -config flag)\n\n" +
 			"Server Examples:\n" +
 			"  # Development mode (auto-detects .localconfig.yaml/.yml)\n" +
-			"  microvault -dev\n\n" +
+			"  selfstack -dev\n\n" +
 			"  # Development mode with explicit config\n" +
-			"  microvault -dev -config my-config.yaml\n\n" +
+			"  selfstack -dev -config my-config.yaml\n\n" +
 			"  # Production mode\n" +
-			"  CONFIG_PATH=/etc/microvault/prod.yaml microvault\n\n" +
+			"  CONFIG_PATH=/etc/selfstack/prod.yaml selfstack\n\n" +
 			"  # Production with explicit config\n" +
-			"  microvault -config /etc/microvault/prod.yaml\n\n" +
+			"  selfstack -config /etc/selfstack/prod.yaml\n\n" +
 			"Admin Examples:\n" +
 			"  # List all users (flags must come BEFORE command)\n" +
-			"  microvault -config /etc/microvault/config.yaml list\n\n" +
+			"  selfstack -config /etc/selfstack/config.yaml list\n\n" +
 			"  # Delete a user\n" +
-			"  microvault -config /etc/microvault/config.yaml delete user@example.com\n\n" +
+			"  selfstack -config /etc/selfstack/config.yaml delete user@example.com\n\n" +
 			"  # Drain user credits\n" +
-			"  microvault -config /etc/microvault/config.yaml drain user@example.com\n\n" +
+			"  selfstack -config /etc/selfstack/config.yaml drain user@example.com\n\n" +
 			"  # Boost user with 100,000 credit units (10.0000 credits with scale=4)\n" +
-			"  microvault -config /etc/microvault/config.yaml boost user@example.com 100000\n"
+			"  selfstack -config /etc/selfstack/config.yaml boost user@example.com 100000\n"
 
 		fmt.Fprint(os.Stderr, helpText)
 	}
@@ -124,12 +124,12 @@ func main() {
 		} else {
 			configFile = os.Getenv("CONFIG_PATH")
 			if configFile == "" {
-				if _, err := os.Stat("/etc/microvault/config.yaml"); err == nil {
-					configFile = "/etc/microvault/config.yaml"
-				} else if _, err := os.Stat("/etc/microvault/config.yml"); err == nil {
-					configFile = "/etc/microvault/config.yml"
+				if _, err := os.Stat("/etc/selfstack/config.yaml"); err == nil {
+					configFile = "/etc/selfstack/config.yaml"
+				} else if _, err := os.Stat("/etc/selfstack/config.yml"); err == nil {
+					configFile = "/etc/selfstack/config.yml"
 				} else {
-					configFile = "/etc/microvault/config.json"
+					configFile = "/etc/selfstack/config.json"
 				}
 			}
 		}

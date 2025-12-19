@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/bosbaber/hackweek/microvault/internal/ledger"
+	"github.com/bosbaber/hackweek/selfstack/internal/ledger"
 	redis "github.com/redis/go-redis/v9"
 )
 
@@ -28,7 +28,7 @@ func New(addr string, db int, password string, keyPrefix string) (*Ledger, error
 		return nil, fmt.Errorf("redis address is required")
 	}
 	if keyPrefix == "" {
-		keyPrefix = "microvault:credits:"
+		keyPrefix = "selfstack:credits:"
 	}
 
 	cli := redis.NewClient(&redis.Options{

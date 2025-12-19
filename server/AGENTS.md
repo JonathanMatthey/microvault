@@ -1,6 +1,6 @@
 # Agent Instructions
 
-Project: MicroVault (Go backend + JS frontend)
+Project: SelfStack (Go backend + JS frontend)
 
 ## Key Behaviors
 - Config uses YAML by default; prefer `.localconfig.yaml`/`config.yaml` (JSON still parsed for legacy).
@@ -15,12 +15,12 @@ Project: MicroVault (Go backend + JS frontend)
 - Use YAML-first in docs and examples; keep configs aligned with `credits.units_per_credit` and `credits.scale`.
 
 ## Build & Test
-- Backend: `go test ./...` and `go build -o microvault .`
+- Backend: `go test ./...` and `go build -o selfstack .`
 - Frontend: `cd sample-client && pnpm install --frozen-lockfile && pnpm run build`
 
 ## Deployment Notes
 - `deploy.sh` validates `deploy/config.yaml` via PyYAML before upload.
-- Default config paths: `.localconfig.yaml/.yml` and `/etc/microvault/config.yaml` (YAML preferred).
+- Default config paths: `.localconfig.yaml/.yml` and `/etc/selfstack/config.yaml` (YAML preferred).
 
 ## Editing Guidance
 - Use `apply_patch` for single-file edits when practical; avoid unnecessary whitespace churn.

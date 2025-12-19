@@ -24,7 +24,7 @@ func NewRedis(addr string, db int, password, keyPrefix string) (Store, error) {
 	}
 	p := keyPrefix
 	if p == "" {
-		p = "microvault:share:"
+		p = "selfstack:share:"
 	}
 	return &redisStore{c: cli, prefix: p}, nil
 }

@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bosbaber/hackweek/microvault/internal/ledger"
+	"github.com/bosbaber/hackweek/selfstack/internal/ledger"
 	"github.com/google/uuid"
 )
 

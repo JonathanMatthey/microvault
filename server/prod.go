@@ -10,18 +10,18 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
-	"github.com/bosbaber/hackweek/microvault/internal/account"
-	"github.com/bosbaber/hackweek/microvault/internal/activity"
-	"github.com/bosbaber/hackweek/microvault/internal/core"
-	"github.com/bosbaber/hackweek/microvault/internal/ledger"
-	"github.com/bosbaber/hackweek/microvault/internal/ledger/memory"
-	redisledger "github.com/bosbaber/hackweek/microvault/internal/ledger/redis"
-	"github.com/bosbaber/hackweek/microvault/internal/monetization/incoming"
-	"github.com/bosbaber/hackweek/microvault/internal/policy"
-	"github.com/bosbaber/hackweek/microvault/internal/share"
-	sharestore "github.com/bosbaber/hackweek/microvault/internal/share/store"
-	"github.com/bosbaber/hackweek/microvault/internal/storage"
-	"github.com/bosbaber/hackweek/microvault/internal/upload"
+	"github.com/bosbaber/hackweek/selfstack/internal/account"
+	"github.com/bosbaber/hackweek/selfstack/internal/activity"
+	"github.com/bosbaber/hackweek/selfstack/internal/core"
+	"github.com/bosbaber/hackweek/selfstack/internal/ledger"
+	"github.com/bosbaber/hackweek/selfstack/internal/ledger/memory"
+	redisledger "github.com/bosbaber/hackweek/selfstack/internal/ledger/redis"
+	"github.com/bosbaber/hackweek/selfstack/internal/monetization/incoming"
+	"github.com/bosbaber/hackweek/selfstack/internal/policy"
+	"github.com/bosbaber/hackweek/selfstack/internal/share"
+	sharestore "github.com/bosbaber/hackweek/selfstack/internal/share/store"
+	"github.com/bosbaber/hackweek/selfstack/internal/storage"
+	"github.com/bosbaber/hackweek/selfstack/internal/upload"
 )
 
 // fetchWalletMetadata fetches the Open Payments wallet address metadata to get assetCode and assetScale
@@ -144,7 +144,7 @@ func initProdMode(e *echo.Echo, cfg *Config) {
 	var incomingRepo incoming.Repository
 	if cfg.Monetization.Enabled && cfg.Server.Redis.Enabled {
 		addr := fmt.Sprintf("%s:%d", cfg.Server.Redis.Host, cfg.Server.Redis.Port)
-		repo, err := incoming.NewRedisRepo(addr, cfg.Server.Redis.DB, cfg.Server.Redis.Password, "microvault:ip:")
+		repo, err := incoming.NewRedisRepo(addr, cfg.Server.Redis.DB, cfg.Server.Redis.Password, "selfstack:ip:")
 		if err != nil {
 			log.Fatalf("Failed to create incoming payments repository: %v", err)
 		}
@@ -260,7 +260,7 @@ func initProdMode(e *echo.Echo, cfg *Config) {
 	var sh sharestore.Store
 	if cfg.Server.Redis.Enabled {
 		addr := fmt.Sprintf("%s:%d", cfg.Server.Redis.Host, cfg.Server.Redis.Port)
-		st, err := sharestore.NewRedis(addr, cfg.Server.Redis.DB, cfg.Server.Redis.Password, "microvault:share:")
+		st, err := sharestore.NewRedis(addr, cfg.Server.Redis.DB, cfg.Server.Redis.Password, "selfstack:share:")
 		if err != nil {
 			log.Fatalf("Failed to create Redis share store: %v", err)
 		}

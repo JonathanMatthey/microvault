@@ -7,8 +7,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/bosbaber/hackweek/microvault/internal/core"
-	"github.com/bosbaber/hackweek/microvault/internal/storage"
+	"github.com/bosbaber/hackweek/selfstack/internal/core"
+	"github.com/bosbaber/hackweek/selfstack/internal/storage"
 )
 
 // FileListItem represents a file in the user's storage

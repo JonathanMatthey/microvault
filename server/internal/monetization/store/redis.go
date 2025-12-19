@@ -20,7 +20,7 @@ func NewRedisStore(addr string, db int, password, keyPrefix string) (Store, erro
 	}
 	p := keyPrefix
 	if p == "" {
-		p = "microvault:wm:"
+		p = "selfstack:wm:"
 	}
 	return &redisStore{c: rdb, prefix: p}, nil
 }

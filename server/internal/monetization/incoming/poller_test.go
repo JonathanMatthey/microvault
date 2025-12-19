@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	memledger "github.com/bosbaber/hackweek/microvault/internal/ledger/memory"
+	memledger "github.com/bosbaber/hackweek/selfstack/internal/ledger/memory"
 )
 
 func TestPoller_CreditsDeltas(t *testing.T) {

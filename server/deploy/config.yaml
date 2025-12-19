@@ -6,15 +6,15 @@ server:
     port: 6379
     db: 0
     password: ""
-    key_prefix: "microvault:credits:"
+    key_prefix: "selfstack:credits:"
 auth:
   enabled: true
-  google_client_path: /etc/microvault/client.json
+  google_client_path: /etc/selfstack/client.json
   google_client_id: ""
 cors:
   allow_origins:
     - https://vault.skatkis-tech.net
-    - https://microvault.skatkis-tech.net
+    - https://selfstack.skatkis-tech.net
     - http://localhost:5173
     - http://127.0.0.1:5173
     - http://localhost:3000

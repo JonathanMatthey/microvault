@@ -1,10 +1,10 @@
-# MicroVault 🔐
+# SelfStack 🔐
 
 **Pay-per-use file hosting powered by Open Payments**
 
 Store files and pay only for what you use - per GB, per hour. No subscriptions, no minimums, just simple micropayments.
 
-![MicroVault](https://img.shields.io/badge/ILP-Hackathon%202025-emerald)
+![SelfStack](https://img.shields.io/badge/ILP-Hackathon%202025-emerald)
 
 ## Features
 
@@ -35,7 +35,7 @@ Store files and pay only for what you use - per GB, per hour. No subscriptions, 
 ```bash
 # Clone the repository
 git clone <repo-url>
-cd microvault
+cd selfstack
 
 # Install dependencies
 npm install
@@ -87,12 +87,12 @@ Files are billed per hour based on their size. Delete files anytime to stop char
 
 ## Open Payments Integration
 
-MicroVault uses the [Open Payments](https://openpayments.dev) standard for receiving payments. Users can top up their balance using any Open Payments-enabled wallet.
+SelfStack uses the [Open Payments](https://openpayments.dev) standard for receiving payments. Users can top up their balance using any Open Payments-enabled wallet.
 
 ### Payment Flow
 
 1. User enters their wallet address
-2. MicroVault creates an incoming payment request
+2. SelfStack creates an incoming payment request
 3. User approves the payment in their wallet
 4. Balance is credited to user's account
 5. Files remain accessible while balance > 0

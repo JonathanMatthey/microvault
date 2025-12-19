@@ -7,8 +7,8 @@ import (
 	"os"
 	"text/tabwriter"
 
-	redisledger "github.com/bosbaber/hackweek/microvault/internal/ledger/redis"
-	"github.com/bosbaber/hackweek/microvault/internal/storage"
+	redisledger "github.com/bosbaber/hackweek/selfstack/internal/ledger/redis"
+	"github.com/bosbaber/hackweek/selfstack/internal/storage"
 	"gopkg.in/yaml.v3"
 )
 
@@ -64,7 +64,7 @@ func loadConfigForCLI(configPath string) (*Config, error) {
 		config.Server.Redis.Host = "127.0.0.1"
 	}
 	if config.Server.Redis.KeyPrefix == "" {
-		config.Server.Redis.KeyPrefix = "microvault:credits:"
+		config.Server.Redis.KeyPrefix = "selfstack:credits:"
 	}
 
 	return &config, nil
@@ -114,17 +114,17 @@ func runCLI(command string, args []string, configPath string) {
 		listUsers(l, s3Client, cfg)
 	case "delete":
 		if len(args) < 1 {
-			log.Fatalf("Usage: microvault delete <userID>")
+			log.Fatalf("Usage: selfstack delete <userID>")
 		}
 		deleteUser(args[0], l, s3Client, cfg)
 	case "drain":
 		if len(args) < 1 {
-			log.Fatalf("Usage: microvault drain <userID>")
+			log.Fatalf("Usage: selfstack drain <userID>")
 		}
 		drainUser(args[0], l, cfg)
 	case "boost":
 		if len(args) < 2 {
-			log.Fatalf("Usage: microvault boost <userID> <amount>")
+			log.Fatalf("Usage: selfstack boost <userID> <amount>")
 		}
 		var amount int64
 		if _, err := fmt.Sscanf(args[1], "%d", &amount); err != nil {

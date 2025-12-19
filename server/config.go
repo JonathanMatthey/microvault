@@ -209,7 +209,7 @@ func LoadConfig(configPath string) (*Config, error) {
 		config.Server.Redis.Host = "127.0.0.1"
 	}
 	if config.Server.Redis.KeyPrefix == "" {
-		config.Server.Redis.KeyPrefix = "microvault:credits:"
+		config.Server.Redis.KeyPrefix = "selfstack:credits:"
 	}
 
 	// Default price per credit (minor currency units per credit)

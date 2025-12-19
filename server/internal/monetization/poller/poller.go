@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bosbaber/hackweek/microvault/internal/ledger"
-	"github.com/bosbaber/hackweek/microvault/internal/monetization/store"
+	"github.com/bosbaber/hackweek/selfstack/internal/ledger"
+	"github.com/bosbaber/hackweek/selfstack/internal/monetization/store"
 )
 
 const (

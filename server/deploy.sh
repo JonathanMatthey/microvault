@@ -79,13 +79,14 @@ echo "=== Verifying Certbot Certificates ==="
 ssh root@$SERVER '
 	set -euo pipefail
 	domains=("selfstack.skatkis-tech.net" "content.skatkis-tech.net")
-	missing=0
+	need_issue=()
 	echo "Checking certbot allocations for: ${domains[*]}"
 
 	if command -v certbot >/dev/null 2>&1; then
 		certbot --version || true
 	else
-		echo "Warning: certbot not found on server PATH" >&2
+		echo "Error: certbot not found on server PATH" >&2
+		exit 1
 	fi
 
 	for d in "${domains[@]}"; do
@@ -95,23 +96,41 @@ ssh root@$SERVER '
 			ls -l "$live" || true
 			if [ ! -f "$live/fullchain.pem" ] || [ ! -f "$live/privkey.pem" ]; then
 				echo "Missing fullchain.pem or privkey.pem in $live" >&2
-				missing=1
+				need_issue+=("$d")
 			else
 				if command -v openssl >/dev/null 2>&1; then
 					echo "Certificate metadata:"
 					openssl x509 -in "$live/fullchain.pem" -noout -issuer -subject -dates || true
 				fi
-				if command -v certbot >/dev/null 2>&1; then
-					echo "certbot certificates for $d:" && certbot certificates --domain "$d" || true
-				fi
+				echo "certbot certificates for $d:" && certbot certificates --domain "$d" || true
 			fi
-			# Check renewal config exists
-			[ -f "/etc/letsencrypt/renewal/$d.conf" ] || { echo "Missing renewal config: /etc/letsencrypt/renewal/$d.conf" >&2; missing=1; }
+			[ -f "/etc/letsencrypt/renewal/$d.conf" ] || { echo "Missing renewal config: /etc/letsencrypt/renewal/$d.conf" >&2; need_issue+=("$d"); }
 		else
 			echo "Missing live directory: $live" >&2
-			missing=1
+			need_issue+=("$d")
 		fi
 	done
+
+	if [ "${#need_issue[@]}" -gt 0 ]; then
+		echo "Attempting to issue certificates for: ${need_issue[*]}"
+		# Ensure nginx is running and will serve challenges
+		systemctl status nginx >/dev/null 2>&1 || systemctl start nginx || true
+		for d in "${need_issue[@]}"; do
+			if certbot certificates --domain "$d" >/dev/null 2>&1; then
+				echo "certbot reports an entry for $d but live files missing; attempting reinstall"
+			fi
+			if [ -n "${CERTBOT_EMAIL:-}" ]; then
+				emailArgs=(--email "$CERTBOT_EMAIL")
+			else
+				emailArgs=(--register-unsafely-without-email)
+			fi
+			# Prefer nginx plugin to handle challenge config automatically
+			certbot --nginx --non-interactive --agree-tos --redirect "${emailArgs[@]}" -d "$d" || {
+				echo "Failed to issue certificate for $d via nginx plugin" >&2
+				exit 1
+			}
+		done
+	fi
 
 	# Show certbot timers if available
 	if command -v systemctl >/dev/null 2>&1; then
@@ -119,10 +138,14 @@ ssh root@$SERVER '
 		systemctl status certbot.timer 2>/dev/null || true
 	fi
 
-	if [ "$missing" -ne 0 ]; then
-		echo "One or more certificates are missing or incomplete. Please ensure certbot issued valid certs for the domains above before reloading nginx." >&2
-		exit 1
-	fi
+	# Final verification
+	for d in "${domains[@]}"; do
+		live="/etc/letsencrypt/live/$d"
+		if [ ! -f "$live/fullchain.pem" ] || [ ! -f "$live/privkey.pem" ]; then
+			echo "Certificate for $d is still missing after issuance attempt." >&2
+			exit 1
+		fi
+	done
 '
 
 echo "=== Testing and Reloading Nginx ==="

@@ -75,97 +75,10 @@ echo "=== Enabling Nginx Sites ==="
 ssh root@$SERVER "ln -sf /etc/nginx/sites-available/content.skatkis-tech.net.conf /etc/nginx/sites-enabled/"
 ssh root@$SERVER "ln -sf /etc/nginx/sites-available/selfstack.skatkis-tech.net.conf /etc/nginx/sites-enabled/"
 
-echo "=== Verifying Certbot Certificates ==="
-ssh root@$SERVER '
-	set -euo pipefail
-	domains=("selfstack.skatkis-tech.net" "content.skatkis-tech.net")
-	need_issue=()
-	echo "Checking certbot allocations for: ${domains[*]}"
-
-	if command -v certbot >/dev/null 2>&1; then
-		certbot --version || true
-	else
-		echo "Error: certbot not found on server PATH" >&2
-		exit 1
-	fi
-
-	for d in "${domains[@]}"; do
-		echo "--- $d ---"
-		live="/etc/letsencrypt/live/$d"
-		if [ -d "$live" ]; then
-			ls -l "$live" || true
-			if [ ! -f "$live/fullchain.pem" ] || [ ! -f "$live/privkey.pem" ]; then
-				echo "Missing fullchain.pem or privkey.pem in $live" >&2
-				need_issue+=("$d")
-			else
-				if command -v openssl >/dev/null 2>&1; then
-					echo "Certificate metadata:"
-					openssl x509 -in "$live/fullchain.pem" -noout -issuer -subject -dates || true
-				fi
-				echo "certbot certificates for $d:" && certbot certificates --domain "$d" || true
-			fi
-			[ -f "/etc/letsencrypt/renewal/$d.conf" ] || { echo "Missing renewal config: /etc/letsencrypt/renewal/$d.conf" >&2; need_issue+=("$d"); }
-		else
-			echo "Missing live directory: $live" >&2
-			need_issue+=("$d")
-		fi
-	done
-
-	if [ "${#need_issue[@]}" -gt 0 ]; then
-		echo "Attempting to issue certificates for: ${need_issue[*]}"
-		# Ensure nginx is running and will serve challenges
-		systemctl status nginx >/dev/null 2>&1 || systemctl start nginx || true
-		for d in "${need_issue[@]}"; do
-			if certbot certificates --domain "$d" >/dev/null 2>&1; then
-				echo "certbot reports an entry for $d but live files missing; attempting reinstall"
-			fi
-			if [ -n "${CERTBOT_EMAIL:-}" ]; then
-				emailArgs=(--email "$CERTBOT_EMAIL")
-			else
-				emailArgs=(--register-unsafely-without-email)
-			fi
-			# Prefer nginx plugin to handle challenge config automatically
-			certbot --nginx --non-interactive --agree-tos --redirect "${emailArgs[@]}" -d "$d" || {
-				echo "Failed to issue certificate for $d via nginx plugin" >&2
-				exit 1
-			}
-		done
-	fi
-
-	# Show certbot timers if available
-	if command -v systemctl >/dev/null 2>&1; then
-		systemctl list-timers --all | grep -E "certbot|letsencrypt" || true
-		systemctl status certbot.timer 2>/dev/null || true
-	fi
-
-	# Final verification
-	for d in "${domains[@]}"; do
-		live="/etc/letsencrypt/live/$d"
-		if [ ! -f "$live/fullchain.pem" ] || [ ! -f "$live/privkey.pem" ]; then
-			echo "Certificate for $d is still missing after issuance attempt." >&2
-			exit 1
-		fi
-	done
-'
+## Certbot issuance is handled out-of-band. Skipping cert checks/issuance here.
 
 echo "=== Testing and Reloading Nginx ==="
-ssh root@$SERVER '
-  # Capture nginx test output
-  nginx_output=$(nginx -t 2>&1)
-  
-  # Filter out selfstack certificate errors
-  filtered_output=$(echo "$nginx_output" | grep -v "cannot load certificate.*selfstack")
-  
-  # Check if there are any real errors (test failed) after filtering
-  if echo "$filtered_output" | grep -q "test failed"; then
-    echo "$filtered_output"
-    exit 1
-  fi
-  
-  # If we get here, either test passed or only had selfstack cert warnings
-  echo "$filtered_output"
-  systemctl reload nginx
-'
+ssh root@$SERVER "nginx -t && systemctl reload nginx"
 
 echo "=== Installing and Starting SelfStack Service ==="
 ssh root@$SERVER "cd /root/selfstack && chmod +x install.sh && ./install.sh"

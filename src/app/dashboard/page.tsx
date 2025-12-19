@@ -434,13 +434,24 @@ export default function Dashboard() {
                 </button>
               </>
             ) : (
-              <div ref={loginButtonRef} className="flex items-center" />
+              <p className="text-sm text-gray-600">Sign in below to enable uploads</p>
             )}
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+        {!token && (
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 flex items-center justify-between gap-6">
+            <div>
+              <p className="text-sm text-gray-500">Authenticate</p>
+              <p className="text-lg font-semibold text-gray-900">Sign in with Google to start</p>
+              <p className="text-sm text-gray-600 mt-1">Enables uploads, balance polling, and account access.</p>
+            </div>
+            <div ref={loginButtonRef} className="flex items-center" />
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white rounded-2xl p-6 border border-gray-100">
             <div className="flex items-center gap-4">

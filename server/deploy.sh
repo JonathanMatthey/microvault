@@ -1,6 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
+# Ensure we run from the directory containing this script (server/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
 SERVER=65.21.180.95
 
 echo "=== Building SelfStack Backend ==="

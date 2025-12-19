@@ -9,10 +9,30 @@ GOOS=linux GOARCH=amd64 go build -o selfstack -ldflags "-s -w" .
 
 echo "=== Building Next.js Frontend ==="
 cd ..
-# Load nvm and use Node 20
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm use 20 || { echo "Node 20 not found. Install with: nvm install 20" >&2; exit 1; }
+# Ensure Node 20 is available (prefer nvm if present, otherwise use system node)
+if command -v nvm >/dev/null 2>&1; then
+	export NVM_DIR="$HOME/.nvm"
+	[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+	nvm install 20 >/dev/null 2>&1 || true
+	nvm use 20 || { echo "Failed to use Node 20 via nvm" >&2; exit 1; }
+else
+	if command -v node >/dev/null 2>&1; then
+		NODE_MAJOR=$(node -p "process.versions.node.split('.')[0]" || echo 0)
+		if [ "$NODE_MAJOR" -lt 20 ]; then
+			echo "Node >= 20 is required. Found $(node -v)." >&2; exit 1
+		fi
+	else
+		echo "Node 20 is required but not found." >&2; exit 1
+	fi
+fi
+
+# Ensure pnpm is available (try corepack if missing)
+if ! command -v pnpm >/dev/null 2>&1; then
+	if command -v corepack >/dev/null 2>&1; then
+		corepack enable || true
+		corepack prepare pnpm@latest --activate || true
+	fi
+fi
 
 if command -v pnpm >/dev/null 2>&1; then
 	pnpm install
@@ -20,7 +40,7 @@ if command -v pnpm >/dev/null 2>&1; then
 	[ -f .env.local ] && mv .env.local .env.local.bak
 	pnpm run build
 	# Restore .env.local after build
-	[ -f .env.local.bak ] && mv .env.local.bak .env.local
+	[ -f .env.local.bak ] && mv .env.local .env.local
 else
 	echo "pnpm is required to build the frontend" >&2
 	exit 1

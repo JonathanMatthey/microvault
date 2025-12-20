@@ -5,10 +5,15 @@ git clone <repo-url>
 
 Store files and pay only for what you use—per GB, per hour. Deploy on your own infra, keep data local, and use Open Payments / Web Monetization for granular billing. Internet access is only required for payment settlement, not for data transfer.
 
-![SelfStack](https://img.shields.io/badge/ILP-Hackathon%202025-emerald)
+![alt screenshot1](screenshots/selfstack1.png)
+
+## Introduction
+
+SelfStack was built during the Interledger internal hackathon in December 2025 as a proof-of-concept for pay-per-use, on-prem-friendly file hosting powered by Open Payments. It explores granular billing, expiring share links, and a minimal operational footprint suitable for constrained or private environments.
+
+Note: The public deployment has been shut down for now. If you are interested in continuing this project, feel free to fork or pick it up from this repository. The codebase remains available and can be redeployed by future maintainers.
 
 ## Highlights
-
 - 📁 Upload any file type via web UI (drag-and-drop or browse)
 - 🔒 Data can stay entirely on-prem; storage and access do not require external internet
 - 💰 Pay-per-use economics; balance freezes uploads/downloads when negative
@@ -22,6 +27,7 @@ Store files and pay only for what you use—per GB, per hour. Deploy on your own
 - 🛠️ Admin CLI available for account management
 
 ## Features
+![screenshot2](screenshots/selfstack2.png)
 
 - Pay per GB per hour; simple pricing (see below)
 - Real-time balance polling and fixed-point ledger (4 decimal places)

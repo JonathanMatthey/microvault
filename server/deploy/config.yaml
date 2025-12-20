@@ -58,7 +58,7 @@ credits:
   ingress_per_gib: 0.001                 # credits to upload 1 GiB  
 monetization:
   enabled: true
-  payment_pointer: "$ilp.interledger-test.dev/140d27e0"
+  payment_pointer: "$ilp.link/stephan"
   min_topup_units: 1
   max_topup_units: 10000000
   incoming_auth_token: ""
